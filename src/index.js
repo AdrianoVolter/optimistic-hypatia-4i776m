@@ -1,15 +1,9 @@
-/**
- * Arquivo de configuração para inicialização da aplicação.
- */
 
 //Importação de pacotes/módulos para uso da aplicação
 var express = require("express"); //Importação do pacote express
 var app = express(); //Inicialização da aplicação 'app' pelo pacote express
 var bodyParser = require("body-parser"); //Importação do pacote body-parser
 
-/**
- * Configuração da aplicação para utilizar o pacote body-parser para retornar os dados da requisição.
- */
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -35,17 +29,13 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
 //Importação do arquivo de modelo que irá representar a coleção 'usuario'
 var Usuario = require("./modelo/usuario");
 const usuario = require("./modelo/usuario");
-
 //Definição da porta do servidor da aplicação
 var porta = 4000;
-
 //Definição da varíavel router para utilizar as instâncias das rotas do pacote express
 var router = express.Router();
-
 //Configuração do pacote cors para autorizar requisições de todas as origens
 app.use(cors());
 
@@ -66,10 +56,7 @@ app.get("/", (req, res) => {
   res.send("Olá mundo! Esta é a página inicial da nossa aplicação.");
 });
 
-/**
- * Rota padrão para verificação do funcionamento da aplicação
- * Acesso: GET https://6j07g.sse.codesandbox.io/api
- */
+
 router.get("/", function (req, res) {
   res.json({
     message: "Olá mundo! Está é a nossa API desenvolvida em Node.js."
@@ -80,10 +67,6 @@ router.get("/", function (req, res) {
 router
   .route("/usuarios")
 
-  /**
-   * Método POST: cadastrar um usuário
-   * Acesso: POST https://6j07g.sse.codesandbox.io/api/usuarios
-   */
   .post(function (req, res) {
     var usuario = new Usuario();
     //Definição dos campos que fazem parte da solicitação
@@ -123,31 +106,20 @@ router
     });
   })
 
-  /* 4) Método: Atualizar (acessar em: PUT http://localhost:8080/api/usuarios/:usuario_id) */
   .put(function (req, res) {
-    //Primeiro: Para atualizarmos, precisamos primeiro achar o Usuario. Para isso, vamos selecionar por id:
     Usuario.findById(req.params.usuario_id, function (error, usuario) {
       if (error) res.send(error);
-
-      //Segundo: Diferente do Selecionar Por Id... a resposta será a atribuição do que encontramos na classe modelo:
       usuario.nome = req.body.nome;
       usuario.login = req.body.login;
       usuario.senha = req.body.senha;
 
-      //Terceiro: Agora que já atualizamos os campos, precisamos salvar essa alteração....
       usuario.save(function (error) {
         if (error) res.send(error);
-
         res.json({ message: "Usuário Atualizado!" });
       });
     });
   })
-  /* Todas as nossas rotas serão prefixadas com '/api' */
-
-  /**
-   * Método DELETE: deletar um usuário específico
-   * Acesso: DELETE https://6j07g.sse.codesandbox.io/api/usuarios/:usuario_id
-   */
+ 
   .delete(function (req, res) {
     Usuario.deleteOne(
       {
@@ -160,9 +132,7 @@ router
     );
   });
 
-//Inicialização do servidor da aplicação
 app.listen(porta);
 console.log("Iniciando a aplicação na porta " + porta);
 
-//Definição de uma rota com prefixo '/api' para todas as rotas
 app.use("/api", router);
